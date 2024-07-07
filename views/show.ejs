@@ -1,0 +1,121 @@
+<% layout("/layouts/boilerplate") %>
+
+<body>
+    <div class="row">
+      <div class="col-8 mt-3">
+        <h3>Listing Details</h3>
+      </div>
+      <div class="col-8 offset-3 mt-3 listing-card">
+        <div class="listing-card card" style="width: 32rem;">
+        
+        <img src="<%= onesdata.image.url %>" class="card-img-top show-img" alt="listing_image">
+      
+        <div class="card-body">
+          <p class="card-text"><b><%= onesdata.title %></b></p>
+          <!-- <br> -->
+          <p class="card-text name">Owned by :- <%= onesdata.owner.username%></p>
+          <p class="card-text"><%= onesdata.description %></p>
+          <p class="card-text">&#8377 <%= onesdata.price.toLocaleString("en-IN") %></p>
+          <p class="card-text"><%= onesdata.location %></p>
+          <p class="card-text"><%= onesdata.country %></p>  
+            
+        </div>
+      
+      </div>
+      </div>
+      <!-- <div class="col-8 offset-2">
+        <ul>
+          <li><%= onesdata.title %></li>
+          <li><%= onesdata.description %></li>
+          <li>&#8377 <%= onesdata.price.toLocaleString("en-IN") %></li>
+          <li><%= onesdata.location %></li>
+          <li><%= onesdata.country %></li>
+      </ul>
+      </div> -->
+    </div>
+    <% if(currUser && currUser._id.equals(onesdata.owner._id)){ %>
+    <div class="row">
+      <div class="col-1 offset-4 ">
+        <a href="/listings/<%= onesdata._id %>/edit" class="btn btn-dark edit-btn">Edit</a>
+      </div>
+      <div class="col-1 offset-1 delete-btn">
+        <form method="post" action="/listings/<%= onesdata._id %>?_method=DELETE">
+          <button class="btn btn-dark">Delete</button>
+      </form>
+      </div>
+      <% } %>
+
+      <div class="col-8 offset-2 mb-3 mt-3">
+        <hr>
+       
+       <form action="/listings/<%= onesdata._id %>/review" method="POST" novalidate class="mb-3 needs-validation">
+        <!-- <div class="mb-3 mt-3 offset-4">
+          <h4>Write a review</h4>
+          <label for="rating" class="form-label">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rating</label><br>
+          <input type="range" min="1" max="5" id="rating" name="review[rating]" >
+        </div> -->
+      <div class="mb-3 mt-3 offset-4">
+        <h4>Write a review</h4>
+        <fieldset class="starability-slot">
+          <!-- <label for="rating" class="form-label">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rating</label> -->
+          <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
+          <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+          <label for="first-rate1" title="Terrible">1 star</label>
+          <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+          <label for="first-rate2" title="Not good">2 stars</label>
+          <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+          <label for="first-rate3" title="Average">3 stars</label>
+          <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+          <label for="first-rate4" title="Very good">4 stars</label>
+          <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+          <label for="first-rate5" title="Amazing">5 stars</label>
+        </fieldset>
+      </div>
+        <div class="mb-3 mt-3">
+          <label for="comment" class="form-label">Add a brief review</label>
+          <textarea name="review[comment]" id="comment" cols="30" rows="5" class="form-control" required></textarea>
+        </div>
+        <button class="btn btn-dark sumbtn">submit</button>
+        
+       </form>
+
+       <hr>
+       <% if (onesdata.reviews.length > 0){ %>
+       <p><b>ALL REVIEWS!</b></p>
+       <div class="row ">
+       
+        <% for(review of onesdata.reviews){ %>
+          <div class="card col-5 ms-3 mb-3 rev-div">
+            <div class="card-body">
+              <h6 class="card-title"><%= review.author.username %></h6>
+              <p class="starability-result" data-rating=<%= review.rating %>>
+              </p>
+              <p class="card-text star"><%= review.rating %> &#9733</p>
+              <p class="card-text"><%= review.comment %></p>
+              
+              <form  method="POST" action="/listings/<%= onesdata._id %>/review/<%= review._id %>?_method=DELETE"  class="mb-3">
+                <button class="btn btn-sm btn-dark sumbtn">Delete</button>
+              </form>
+            </div>
+           
+          </div>
+          <% } %>
+        </div>
+        <hr>
+        <% } %>
+    </div>
+    <div class="col-8 offset-2 mb-3 mt-3">
+      <h3>you'll be here</h3>
+      <div id="map"></div>
+      <script>
+       let mapToken = "<%=process.env.MAP_TOKEN%>";
+       console.log(mapToken);
+        mapboxgl.accessToken = mapToken;
+          const map = new mapboxgl.Map({
+              container: 'map', // container ID
+              center: [75.78, 26.91], // starting position [lng, lat]
+              zoom: 11 // starting zoom
+          });
+      </script>
+     </div>
+</body>
